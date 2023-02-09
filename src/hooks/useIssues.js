@@ -82,8 +82,10 @@ const monthsAtom = atom((get) => {
       );
 
       const timespentThisMonth = tools.calculateTimespent(issuesThisMonth);
-      const timespentPerIssue =
-        Math.round((timespentThisMonth.hours / issuesThisMonth.length) * 100) / 100;
+      const timespentPerIssue = {
+        hours: Math.round((timespentThisMonth.hours / issuesThisMonth.length) * 100) / 100,
+        seconds: Math.round((timespentThisMonth.seconds / issuesThisMonth.length) * 100) / 100,
+      };
       let timeToResolution = tools.calculateAverageTimeToResolution(issuesThisMonth);
 
       months.push({
@@ -95,26 +97,29 @@ const monthsAtom = atom((get) => {
           : 0,
         timespentEvolution: months[months.length - 1]
           ? tools.calculateIncreasePct(
-              months[months.length - 1].timespent.hours,
-              timespentThisMonth.hours
+              months[months.length - 1].timespent.seconds,
+              timespentThisMonth.seconds
             )
           : 0,
         timespentPerIssue,
         timespentPerIssueEvolution: months[months.length - 1]
           ? tools.calculateIncreasePct(
-              months[months.length - 1].timespentPerIssue,
-              timespentPerIssue
+              months[months.length - 1].timespentPerIssue.seconds,
+              timespentPerIssue.seconds
             )
           : 0,
         timeToResolution,
         timeToResolutionEvolution: months[months.length - 1]
-          ? tools.calculateIncreasePct(months[months.length - 1].timeToResolution, timeToResolution)
+          ? tools.calculateIncreasePct(
+              months[months.length - 1].timeToResolution.seconds,
+              timeToResolution.seconds
+            )
           : 0,
       });
     }
   }
 
-  return months;
+  return months.sort((a, b) => (a.month > b.month ? -1 : 1));
 });
 
 const statsAtom = atom((get) => {

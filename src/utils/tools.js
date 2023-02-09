@@ -13,7 +13,8 @@ export const tools = {
     }, 0);
 
     return {
-      hours: Math.round((timespent / 3500) * 100) / 100,
+      hours: Math.round((timespent / 3600) * 100) / 100,
+      seconds: timespent,
       nbTicketsWithoutTimespent,
     };
   },
@@ -26,6 +27,7 @@ export const tools = {
     return sec ? Math.round((sec / 3600) * 100) / 100 : "N.D";
   },
   colorBySign: (value) => {
+    if (value == 0) return "blue";
     return value >= 0 ? "pink" : "green";
   },
   addSign: (value) => {
@@ -56,6 +58,19 @@ export const tools = {
       return a + elapsedTime;
     }, 0);
 
-    return tools.round(total / (3600 * 1000 * nbIssues));
+    return {
+      hours: tools.round(total / (3600 * 1000 * nbIssues)),
+      seconds: tools.round(total / (1000 * nbIssues)),
+    };
+  },
+  convertSecondsToTime: (sec) => {
+    const hours = Math.floor(sec / 3600);
+    const min = hours ? Math.ceil((sec / 3600 - hours).toFixed(2) * 60) : Math.ceil(sec / 60);
+
+    return hours && min > 10
+      ? `${hours}H${min}min`
+      : hours && min < 10
+      ? `${hours}H0${min}min`
+      : `${min}min`;
   },
 };

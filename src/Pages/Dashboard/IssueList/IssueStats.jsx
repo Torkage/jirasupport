@@ -1,5 +1,6 @@
 import { Group, Text } from "@mantine/core";
 import useIssues from "../../../hooks/useIssues";
+import { tools } from "../../../utils/tools";
 
 const IssueStats = () => {
   const { filteredIssues, stats } = useIssues();
@@ -12,7 +13,7 @@ const IssueStats = () => {
       position="right"
     >
       <Text>
-        {filteredIssues?.length} tickets // {stats.timespent.hours}h
+        {filteredIssues?.length} tickets // {tools.convertSecondsToTime(stats.timespent.seconds)}
         {/* (
         {stats.timespent.nbTicketsWithoutTimespent} tickets non comptabilisés) */}
       </Text>
