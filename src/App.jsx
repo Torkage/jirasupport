@@ -1,27 +1,38 @@
-import { useEffect } from "react";
 import "./App.css";
+import Login from "./Login";
+import Dashboard from "./Pages/Dashboard/Dashboard";
+import useAuth from "./hooks/useAuth";
 import axios from "axios";
-import { VITE_JIRA_EMAIL, VITE_JIRA_TOKEN, VITE_JIRA_URL } from "./config";
+import { Settings } from "luxon";
+import { MantineProvider } from "@mantine/core";
+
+Settings.defaultZoneName = "Indian/Reunion";
 
 function App() {
-  useEffect(() => {
-    getProjects();
-  }, []);
+  const { isConnected, logout } = useAuth();
 
-  const getProjects = async () => {
-    const response = await axios.get(`${VITE_JIRA_URL}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      auth: {
-        username: VITE_JIRA_EMAIL,
-        password: VITE_JIRA_TOKEN,
-      },
-      withCredentials: true,
-    });
-  };
+  axios.interceptors.response.use(
+    function (response) {
+      // Any status code that lie within the range of 2xx cause this function to trigger
+      // Do something with response data
+      return response;
+    },
+    function (error) {
+      if (error.response.status == 401) {
+        console.log("UNAUTHORIZED - login out");
+        logout();
+      }
+      // Any status codes that falls outside the range of 2xx cause this function to trigger
+      // Do something with response error
+      return Promise.reject(error);
+    }
+  );
 
-  return <div className="App">{VITE_JIRA_URL}test</div>;
+  return (
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      {isConnected ? <Dashboard /> : <Login />}
+    </MantineProvider>
+  );
 }
 
 export default App;
