@@ -20,3 +20,5 @@ export const VITE_JIRA_CLIENT_SECRET = isDev
 export const VITE_REDIRECT_URL = isDev
   ? import.meta.env.VITE_REDIRECT_URL
   : process.env.VITE_REDIRECT_URL;
+
+export const VITE_MODE = isDev ? import.meta.env.VITE_MODE : process.env.VITE_MODE;

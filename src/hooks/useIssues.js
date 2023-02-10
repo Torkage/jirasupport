@@ -1,6 +1,7 @@
 import axios from "axios";
 import { atom, useAtom } from "jotai";
 import { DateTime } from "luxon";
+import { VITE_MODE } from "../config";
 import { tools } from "../utils/tools";
 import useProjects from "./useProjects";
 import useSites from "./useSites";
@@ -160,7 +161,10 @@ const useIssues = () => {
         .then((data) => {
           let result = [...previousResult, ...data?.data?.issues];
 
-          if (data?.data?.total > data?.data?.startAt + data?.data?.maxResults && false) {
+          if (
+            data?.data?.total > data?.data?.startAt + data?.data?.maxResults &&
+            VITE_MODE == "development"
+          ) {
             actions.getIssues(
               {
                 ...filters,
