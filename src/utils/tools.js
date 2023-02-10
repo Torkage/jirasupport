@@ -18,6 +18,10 @@ export const tools = {
       nbTicketsWithoutTimespent,
     };
   },
+  calculatePct: (nb1, nb2) => {
+    if (nb1 == 0 || nb2 == 0) return 0;
+    return Math.round((nb1 / nb2) * 10000) / 100;
+  },
   calculateIncreasePct: (nb1, nb2) => {
     if (nb1 == 0) return "0";
     const pct = Math.round((nb2 / nb1 - 1) * 100 * 100) / 100;
@@ -26,8 +30,11 @@ export const tools = {
   transformSecondsToHours: (sec) => {
     return sec ? Math.round((sec / 3600) * 100) / 100 : "N.D";
   },
-  colorBySign: (value) => {
+  colorBySign: (value, inverted = false) => {
     if (value == 0) return "blue";
+    if (inverted) {
+      return value >= 0 ? "green" : "pink";
+    }
     return value >= 0 ? "pink" : "green";
   },
   addSign: (value) => {
@@ -41,6 +48,12 @@ export const tools = {
   round: (value) => {
     if (!value) return 0;
     return Math.round(value * 100) / 100;
+  },
+  calculateTimespentPerIssue: (issues, totalTimeSpent) => {
+    return {
+      hours: Math.round((totalTimeSpent.hours / issues.length) * 100) / 100,
+      seconds: Math.round((totalTimeSpent.seconds / issues.length) * 100) / 100,
+    };
   },
   calculateAverageTimeToResolution: (issues) => {
     let nbIssues = 0;

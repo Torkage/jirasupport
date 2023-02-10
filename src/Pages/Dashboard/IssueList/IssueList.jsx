@@ -1,22 +1,15 @@
-import {
-  ActionIcon,
-  Badge,
-  Box,
-  Card,
-  Container,
-  Group,
-  ScrollArea,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { Container, Group, ScrollArea } from "@mantine/core";
 import { useEffect } from "react";
 import useIssues from "../../../hooks/useIssues";
 import useProjects from "../../../hooks/useProjects";
+import useSites from "../../../hooks/useSites";
+import { searchIssues } from "../../../services/issueService";
 import IssueDetails from "./IssueDetails";
 import IssueFilters from "./IssueFilters";
 import IssueStats from "./IssueStats";
 
 const IssueList = () => {
+  const { selectedSite } = useSites();
   const { selectedProject } = useProjects();
   const { isLoading, filteredIssues, actions } = useIssues();
   useEffect(() => {

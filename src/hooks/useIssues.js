@@ -2,9 +2,12 @@ import axios from "axios";
 import { atom, useAtom } from "jotai";
 import { DateTime } from "luxon";
 import { VITE_MODE } from "../config";
+import { searchIssues } from "../services/issueService";
 import { tools } from "../utils/tools";
 import useProjects from "./useProjects";
 import useSites from "./useSites";
+
+const resolvedStatuses = ["Canceled", "Closed", "Done", "Resolved", "WON'T DO", "WONT DO"];
 
 const issuesAtom = atom([]);
 const selectedIssueAtom = atom(null);
@@ -52,7 +55,7 @@ const filteredIssuesAtom = atom((get) => {
   });
 });
 
-const monthsAtom = atom((get) => {
+const monthsAtom = atom(async (get) => {
   const months = [];
   const issues = get(issuesAtom);
   const issueFilters = get(issueFiltersAtom);
@@ -81,21 +84,28 @@ const monthsAtom = atom((get) => {
           DateTime.fromISO(i.fields.created).startOf("day") <=
             DateTime.fromISO(month).endOf("month").startOf("day")
       );
+      const resolvedIssues = issuesThisMonth.filter((i) =>
+        resolvedStatuses.includes(i.fields.status.name)
+      );
 
-      const timespentThisMonth = tools.calculateTimespent(issuesThisMonth);
-      const timespentPerIssue = {
-        hours: Math.round((timespentThisMonth.hours / issuesThisMonth.length) * 100) / 100,
-        seconds: Math.round((timespentThisMonth.seconds / issuesThisMonth.length) * 100) / 100,
-      };
-      let timeToResolution = tools.calculateAverageTimeToResolution(issuesThisMonth);
+      const timespentThisMonth = tools.calculateTimespent(resolvedIssues);
+      const timespentPerIssue = tools.calculateTimespentPerIssue(
+        resolvedIssues,
+        timespentThisMonth
+      );
+      let timeToResolution = tools.calculateAverageTimeToResolution(resolvedIssues);
 
       months.push({
         month,
         nbIssues: issuesThisMonth.length,
-        timespent: timespentThisMonth,
         nbIssuesEvolution: months[months.length - 1]
           ? tools.calculateIncreasePct(months[months.length - 1].nbIssues, issuesThisMonth.length)
           : 0,
+        nbResolvedIssues: resolvedIssues.length,
+        nbResolvedIssuesEvolution: months[months.length - 1]
+          ? tools.calculatePct(resolvedIssues.length, issuesThisMonth.length)
+          : 0,
+        timespent: timespentThisMonth,
         timespentEvolution: months[months.length - 1]
           ? tools.calculateIncreasePct(
               months[months.length - 1].timespent.seconds,
@@ -143,49 +153,17 @@ const useIssues = () => {
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
   const [stats, setStats] = useAtom(statsAtom);
 
-  console.log("months", months);
-
   const actions = {
-    getIssues: (filters = {}, previousResult = []) => {
+    getIssues: async () => {
       setIsLoading(true);
-      const organizationsFilter =
-        filters?.organizations?.length > 0
-          ? `AND Organizations in (${filters.organizations.join(",")})`
-          : "";
-      axios
-        .post(`https://api.atlassian.com/ex/jira/${selectedSite.id}/rest/api/2/search`, {
-          jql: `project=${selectedProject.key} AND status in (Canceled, Closed, Done, Resolved, "WON'T DO", "WONT DO") AND resolution in (Done, "Won't Do", "Cannot Reproduce", Declined, "Known Error", "Hardware failure", "Software failure") ${organizationsFilter} ORDER BY created DESC, "Time to resolution" ASC`,
-          maxResults: 100,
-          startAt: filters?.startAt || 0,
-        })
-        .then((data) => {
-          let result = [...previousResult, ...data?.data?.issues];
+      const result = await searchIssues({ selectedSite, selectedProject, filters: {} });
 
-          if (
-            data?.data?.total > data?.data?.startAt + data?.data?.maxResults &&
-            VITE_MODE == "development"
-          ) {
-            actions.getIssues(
-              {
-                ...filters,
-                startAt: data?.data?.startAt + data?.data?.maxResults,
-                maxResults: 100,
-              },
-              result
-            );
-          } else {
-            if (!isInit) {
-              setIsInit(true);
-              actions.initOrganizations(result);
-            }
-            setIssues(result);
-            setIsLoading(false);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          setIsLoading(false);
-        });
+      if (!isInit) {
+        setIsInit(true);
+        actions.initOrganizations(result);
+      }
+      setIssues(result);
+      setIsLoading(false);
     },
 
     initOrganizations: (allIssues) => {
@@ -215,8 +193,6 @@ const useIssues = () => {
       setIssueFilters(newFilters);
     },
   };
-
-  console.log("issueFilters", issueFilters);
 
   return {
     issues,

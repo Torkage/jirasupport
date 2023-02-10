@@ -20,7 +20,7 @@ const IssueDetails = () => {
     <Stack>
       {filteredIssues?.map((issue) => {
         return (
-          <Card shadow="xs">
+          <Card shadow="xs" key={`issue${issue.id}`}>
             <Group position="apart" style={{ maxWidth: "100%" }}>
               <Group spacing="xs">
                 <img style={{ width: 20 }} src={`/assets/${issue.fields.issuetype.avatarId}.png`} />

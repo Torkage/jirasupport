@@ -14,13 +14,20 @@ const IssueFilters = () => {
         {months?.map((month) => {
           return (
             <Timeline.Item
+              key={`month${month.month}`}
               bullet={<IconCalendarDue size={12} />}
               title={DateTime.fromISO(month.month).setLocale("fr").toFormat("LLLL yyyy")}
             >
               <StatLine
-                label="tickets"
+                label="tickets créés"
                 value={month.nbIssues}
                 valueEvolution={month.nbIssuesEvolution}
+              />
+              <StatLine
+                label="tickets résolus"
+                value={month.nbResolvedIssues}
+                valueEvolution={month.nbResolvedIssuesEvolution}
+                neutral
               />
               <StatLine
                 label="dépensées"
