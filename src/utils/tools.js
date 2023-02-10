@@ -20,7 +20,7 @@ export const tools = {
   },
   calculatePct: (nb1, nb2) => {
     if (nb1 == 0 || nb2 == 0) return 0;
-    return Math.round((nb1 / nb2) * 10000) / 100;
+    return Math.round(Math.round((nb1 / nb2) * 10000) / 100);
   },
   calculateIncreasePct: (nb1, nb2) => {
     if (nb1 == 0) return "0";

@@ -1,4 +1,4 @@
-import { AppShell, Header, Navbar, Text, Title } from "@mantine/core";
+import { AppShell, Group, Header, Navbar, Text, Title } from "@mantine/core";
 import useProjects from "../../hooks/useProjects";
 import useSites from "../../hooks/useSites";
 import IssueList from "./IssueList/IssueList";
@@ -20,7 +20,10 @@ const Dashboard = () => {
       }
       header={
         <Header height={60} p="xs">
-          <Title order={2}>10positif-Jira support</Title>
+          <Group align="center">
+            <img src="/assets/10Positif.jpg" style={{ width: 30 }} />
+            <Title order={3}>10positif-support</Title>
+          </Group>
         </Header>
       }
       styles={(theme) => ({
