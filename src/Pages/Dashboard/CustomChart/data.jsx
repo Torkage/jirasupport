@@ -1,4 +1,4 @@
-[
+const fakeData = [
   {
     "month": "2023-02-01T00:00:00.000+04:00",
     "nbIssues": 15,
@@ -462,3 +462,5 @@
     "timeToResolutionEvolution": 0
   }
 ]
+
+export default fakeData;
