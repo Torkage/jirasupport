@@ -16,6 +16,8 @@ import { tools } from "../../../utils/tools";
 const IssueDetails = () => {
   const { filteredIssues } = useIssues();
 
+  console.log("filteredIssues", filteredIssues);
+
   return (
     <Stack>
       {filteredIssues?.map((issue) => {
@@ -32,6 +34,12 @@ const IssueDetails = () => {
                 >
                   <IconExternalLink size={18} />
                 </ActionIcon>
+                <Group align="center" spacing="xs">
+                  <img src={issue.fields.status.iconUrl} style={{ width: 15 }} />
+                  <Text variant="light" color="gray" fz="sm" align="center">
+                    {issue.fields.status.name}
+                  </Text>
+                </Group>
               </Group>
               <Group spacing="xs">
                 {issue.fields.assignee && (
@@ -43,18 +51,20 @@ const IssueDetails = () => {
             <Text fw="bold" py="md">
               {issue.fields.summary}
             </Text>
-            <Group position="right">
-              {issue.fields.customfield_10002?.length > 0 && (
+            <Group position="apart">
+              <Group>
+                {issue.fields.customfield_10002?.length > 0 && (
+                  <Text variant="light" color="gray" fz="sm">
+                    {issue.fields.customfield_10002[0].name}
+                  </Text>
+                )}
                 <Text variant="light" color="gray" fz="sm">
-                  {issue.fields.customfield_10002[0].name}
+                  {issue.fields.creator.displayName}
                 </Text>
-              )}
-              <Text variant="light" color="gray" fz="sm">
-                {issue.fields.creator.displayName}
-              </Text>
-              <Text variant="light" color="gray" fz="sm">
-                {tools.formatDate(issue.fields.created)}
-              </Text>
+                <Text variant="light" color="gray" fz="sm">
+                  {tools.formatDate(issue.fields.created)}
+                </Text>
+              </Group>
             </Group>
           </Card>
         );

@@ -50,9 +50,10 @@ export const tools = {
     return Math.round(value * 100) / 100;
   },
   calculateTimespentPerIssue: (issues, totalTimeSpent) => {
+    const issuesWithTimespent = issues.filter((i) => i.fields.timespent);
     return {
-      hours: Math.round((totalTimeSpent.hours / issues.length) * 100) / 100,
-      seconds: Math.round((totalTimeSpent.seconds / issues.length) * 100) / 100,
+      hours: Math.round((totalTimeSpent.hours / issuesWithTimespent.length) * 100) / 100,
+      seconds: Math.round((totalTimeSpent.seconds / issuesWithTimespent.length) * 100) / 100,
     };
   },
   calculateAverageTimeToResolution: (issues) => {

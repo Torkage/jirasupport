@@ -1,22 +1,22 @@
-import { Group, Text } from "@mantine/core";
+import { Group, Badge } from "@mantine/core";
+import useGlobalStats from "../../../hooks/useGlobalStats";
 import useIssues from "../../../hooks/useIssues";
 import { tools } from "../../../utils/tools";
 
 const IssueStats = () => {
-  const { filteredIssues, stats } = useIssues();
+  const stats = useGlobalStats();
 
   return (
     <Group
       sx={(theme) => ({
         padding: theme.spacing.md,
+        marginBottom: theme.spacing.md,
       })}
-      position="right"
+      position="left"
     >
-      <Text>
-        {filteredIssues?.length} tickets // {tools.convertSecondsToTime(stats.timespent.seconds)}
-        {/* (
-        {stats.timespent.nbTicketsWithoutTimespent} tickets non comptabilisés) */}
-      </Text>
+      <Badge>Nombre moyen de tickets/mois : {stats.averageNbIssuesByMonth}</Badge>
+      <Badge>Temps moyen dépensé/ticket : {stats.averageTimespentByIssue}</Badge>
+      <Badge>Temps moyen durée de vie/ticket : {stats.averageTimeToResolution}</Badge>
     </Group>
   );
 };

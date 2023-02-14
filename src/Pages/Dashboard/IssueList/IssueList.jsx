@@ -20,12 +20,12 @@ const IssueList = () => {
     <div>Chargement des tickets...</div>
   ) : (
     <Container>
+      <IssueStats />
       <Group position="apart">
         <ScrollArea style={{ maxWidth: 350, height: "90vh", paddingRight: 20 }}>
           <IssueFilters />
         </ScrollArea>
-        <ScrollArea style={{ maxWidth: 500, height: "90vh" }}>
-          <IssueStats />
+        <ScrollArea style={{ maxWidth: 540, height: "90vh" }}>
           <IssueDetails />
         </ScrollArea>
       </Group>

@@ -19,7 +19,7 @@ const issueFiltersAtom = atom({
 
 const isInitAtom = atom(false);
 
-const filteredIssuesAtom = atom((get) => {
+export const filteredIssuesAtom = atom((get) => {
   const issues = get(issuesAtom);
   const issueFilters = get(issueFiltersAtom);
   return issues.filter((i) => {
@@ -53,7 +53,7 @@ const filteredIssuesAtom = atom((get) => {
   });
 });
 
-const monthsAtom = atom(async (get) => {
+export const monthsAtom = atom((get) => {
   const months = [];
   const issues = get(issuesAtom);
   const issueFilters = get(issueFiltersAtom);
@@ -131,13 +131,6 @@ const monthsAtom = atom(async (get) => {
   return months.sort((a, b) => (a.month > b.month ? -1 : 1));
 });
 
-const statsAtom = atom((get) => {
-  const issues = get(filteredIssuesAtom);
-  return {
-    timespent: tools.calculateTimespent(issues),
-  };
-});
-
 const useIssues = () => {
   const { selectedSite } = useSites();
   const { selectedProject } = useProjects();
@@ -149,7 +142,6 @@ const useIssues = () => {
   const [months, setMonths] = useAtom(monthsAtom);
   const [isInit, setIsInit] = useAtom(isInitAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
-  const [stats, setStats] = useAtom(statsAtom);
 
   const actions = {
     getIssues: async () => {
@@ -204,7 +196,6 @@ const useIssues = () => {
     issueFilters,
     filteredIssues,
     months,
-    stats,
   };
 };
 
