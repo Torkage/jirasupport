@@ -1,7 +1,5 @@
-import axios from "axios";
 import { atom, useAtom } from "jotai";
 import { DateTime } from "luxon";
-import { VITE_MODE } from "../config";
 import { searchIssues } from "../services/issueService";
 import { tools } from "../utils/tools";
 import useProjects from "./useProjects";
@@ -75,7 +73,7 @@ const monthsAtom = atom(async (get) => {
 
     const diffMonths = Math.abs(firstIssueDate.diff(lastIssueDate, ["months"]).toObject().months);
 
-    for (var i = 0; i <= diffMonths + 1; i++) {
+    for (var i = 0; i <= diffMonths; i++) {
       const month = firstIssueDate.plus({ months: i }).startOf("month").toISO();
       const issuesThisMonth = filteredIssues.filter(
         (i) =>
@@ -193,6 +191,8 @@ const useIssues = () => {
       setIssueFilters(newFilters);
     },
   };
+
+  console.log("months", months);
 
   return {
     issues,

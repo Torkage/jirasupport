@@ -23,7 +23,7 @@ export const tools = {
     return Math.round(Math.round((nb1 / nb2) * 10000) / 100);
   },
   calculateIncreasePct: (nb1, nb2) => {
-    if (nb1 == 0) return "0";
+    if (!nb1 || !nb2) return "0";
     const pct = Math.round((nb2 / nb1 - 1) * 100 * 100) / 100;
     return pct;
   },
@@ -77,6 +77,7 @@ export const tools = {
     };
   },
   convertSecondsToTime: (sec) => {
+    if (!sec) return `0min`;
     const hours = Math.floor(sec / 3600);
     const min = hours ? Math.ceil((sec / 3600 - hours).toFixed(2) * 60) : Math.ceil(sec / 60);
 
