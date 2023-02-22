@@ -52,8 +52,14 @@ export const tools = {
   calculateTimespentPerIssue: (issues, totalTimeSpent) => {
     const issuesWithTimespent = issues.filter((i) => i.fields.timespent);
     return {
-      hours: Math.round((totalTimeSpent.hours / issuesWithTimespent.length) * 100) / 100,
-      seconds: Math.round((totalTimeSpent.seconds / issuesWithTimespent.length) * 100) / 100,
+      hours:
+        issuesWithTimespent.length > 0
+          ? Math.round((totalTimeSpent.hours / issuesWithTimespent.length) * 100) / 100
+          : 0,
+      seconds:
+        issuesWithTimespent.length > 0
+          ? Math.round((totalTimeSpent.seconds / issuesWithTimespent.length) * 100) / 100
+          : 0,
     };
   },
   calculateAverageTimeToResolution: (issues) => {
@@ -87,5 +93,11 @@ export const tools = {
       : hours && min < 10
       ? `${hours}H0${min}min`
       : `${min}min`;
+  },
+  isDateInMonth: (date, month) => {
+    return (
+      DateTime.fromISO(date).startOf("day") >= DateTime.fromISO(month).startOf("day") &&
+      DateTime.fromISO(date).startOf("day") <= DateTime.fromISO(month).endOf("month").startOf("day")
+    );
   },
 };

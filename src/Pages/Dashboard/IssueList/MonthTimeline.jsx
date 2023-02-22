@@ -5,7 +5,7 @@ import useIssues from "../../../hooks/useIssues";
 import { tools } from "../../../utils/tools";
 import StatLine from "./StatLine";
 
-const IssueFilters = () => {
+const MonthTimeline = () => {
   const { months, issueFilters, actions } = useIssues();
 
   return (
@@ -48,19 +48,20 @@ const IssueFilters = () => {
                 fullWidth
                 color="blue"
                 variant={issueFilters.months.includes(month.month) ? "filled" : "subtle"}
-                onClick={() =>
-                  actions.onChangeFilters({
-                    target: {
-                      name: "months",
-                      value: issueFilters.months.includes(month.month)
-                        ? issueFilters.months.filter((o) => o !== month.month)
-                        : [...issueFilters.months, month.month],
-                    },
-                  })
-                }
+                onClick={() => actions.onClickMonth(month.month)}
               >
-                Afficher les tickets
+                Sélectionner ce segment
               </Button>
+              {issueFilters.organizations.length == 1 && (
+                <Button
+                  fullWidth
+                  color="gray"
+                  variant="subtle"
+                  onClick={() => actions.openReport(month.month)}
+                >
+                  Afficher le rapport
+                </Button>
+              )}
             </Timeline.Item>
           );
         })}
@@ -69,4 +70,4 @@ const IssueFilters = () => {
   );
 };
 
-export default IssueFilters;
+export default MonthTimeline;

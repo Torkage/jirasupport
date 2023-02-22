@@ -1,5 +1,8 @@
 import { atom, useAtom } from "jotai";
 import { DateTime } from "luxon";
+import SelectOrganization from "../common/SelectOrganization/SelectOrganization";
+import useCustomModal from "../overlays/CustomModal/useCustomModal";
+import Report from "../Pages/Dashboard/Report/Report";
 import { searchIssues } from "../services/issueService";
 import { tools } from "../utils/tools";
 import useProjects from "./useProjects";
@@ -38,12 +41,7 @@ export const filteredIssuesAtom = atom((get) => {
       const sortedMonths = issueFilters.months.sort((a, b) => (a > b ? 1 : -1));
       monthOk = false;
       sortedMonths.forEach((month) => {
-        if (
-          DateTime.fromISO(i.fields.created).startOf("day") >=
-            DateTime.fromISO(month).startOf("day") &&
-          DateTime.fromISO(i.fields.created).startOf("day") <=
-            DateTime.fromISO(month).endOf("month").startOf("day")
-        ) {
+        if (tools.isDateInMonth(i.fields.created, month)) {
           monthOk = true;
           return;
         }
@@ -69,11 +67,12 @@ export const monthsAtom = atom((get) => {
     const firstIssueDate = DateTime.fromISO(sortedIssuesByDateAsc[0].fields.created);
     const lastIssueDate = DateTime.fromISO(
       sortedIssuesByDateAsc[sortedIssuesByDateAsc.length - 1].fields.created
+    ).endOf("month");
+
+    const diffMonths = Math.ceil(
+      Math.abs(firstIssueDate.diff(lastIssueDate, ["months"]).toObject().months)
     );
-
-    const diffMonths = Math.abs(firstIssueDate.diff(lastIssueDate, ["months"]).toObject().months);
-
-    for (var i = 0; i <= diffMonths; i++) {
+    for (var i = 0; i < diffMonths; i++) {
       const month = firstIssueDate.plus({ months: i }).startOf("month").toISO();
       const issuesThisMonth = filteredIssues.filter(
         (i) =>
@@ -131,6 +130,24 @@ export const monthsAtom = atom((get) => {
   return months.sort((a, b) => (a.month > b.month ? -1 : 1));
 });
 
+export const filteredMonthsAtom = atom((get) => {
+  const months = get(monthsAtom);
+  const filters = get(issueFiltersAtom);
+  if (filters.months.length > 0) {
+    return months.filter((month) => {
+      let isInMonth = false;
+      filters.months.forEach((m) => {
+        if (tools.isDateInMonth(month.month, m)) {
+          isInMonth = true;
+        }
+      });
+      return isInMonth;
+    });
+  }
+
+  return months;
+});
+
 const useIssues = () => {
   const { selectedSite } = useSites();
   const { selectedProject } = useProjects();
@@ -139,9 +156,12 @@ const useIssues = () => {
   const [selectedIssue, setSelectedIssue] = useAtom(selectedIssueAtom);
   const [organizations, setOrganizations] = useAtom(organizationsAtom);
   const [issueFilters, setIssueFilters] = useAtom(issueFiltersAtom);
-  const [months, setMonths] = useAtom(monthsAtom);
+  const [months] = useAtom(monthsAtom);
+  const [filteredMonths] = useAtom(filteredMonthsAtom);
   const [isInit, setIsInit] = useAtom(isInitAtom);
   const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+
+  const { modalActions } = useCustomModal();
 
   const actions = {
     getIssues: async () => {
@@ -182,9 +202,31 @@ const useIssues = () => {
       };
       setIssueFilters(newFilters);
     },
-  };
 
-  console.log("months", months);
+    onClickMonth: (month) => {
+      actions.onChangeFilters({
+        target: {
+          name: "months",
+          value: issueFilters.months.includes(month)
+            ? issueFilters.months.filter((o) => o !== month)
+            : [...issueFilters.months, month],
+        },
+      });
+    },
+    openReport: (month) => {
+      actions.onChangeFilters({
+        target: {
+          name: "months",
+          value: [month],
+        },
+      });
+      modalActions.openModal({
+        title: "Rapport",
+        content: <Report />,
+      });
+      console.log("month", month);
+    },
+  };
 
   return {
     issues,
@@ -196,6 +238,7 @@ const useIssues = () => {
     issueFilters,
     filteredIssues,
     months,
+    filteredMonths,
   };
 };
 

@@ -1,7 +1,5 @@
 import { Group, Badge } from "@mantine/core";
 import useGlobalStats from "../../../hooks/useGlobalStats";
-import useIssues from "../../../hooks/useIssues";
-import { tools } from "../../../utils/tools";
 
 const IssueStats = () => {
   const stats = useGlobalStats();

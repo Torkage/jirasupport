@@ -1,7 +1,5 @@
 import { Anchor, Center, Container } from "@mantine/core";
 import { VITE_JIRA_CLIENT_ID } from "./config";
-import CustomChart from "./Pages/Dashboard/CustomChart/CustomChart";
-import fakeData from "./Pages/Dashboard/CustomChart/data";
 
 const Login = () => {
   return (
@@ -13,7 +11,6 @@ const Login = () => {
           Connexion à JIRA
         </Anchor>
       </Center>
-      <CustomChart dataOrganisation={fakeData}/>
     </Container>
   );
 };

@@ -5,6 +5,7 @@ import useAuth from "./hooks/useAuth";
 import axios from "axios";
 import { Settings } from "luxon";
 import { MantineProvider } from "@mantine/core";
+import CustomModal from "./overlays/CustomModal/CustomModal";
 
 Settings.defaultZoneName = "Indian/Reunion";
 
@@ -31,6 +32,7 @@ function App() {
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
       {isConnected ? <Dashboard /> : <Login />}
+      <CustomModal />
     </MantineProvider>
   );
 }

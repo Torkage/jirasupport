@@ -1,20 +1,16 @@
 import { AppShell, Group, Header, Navbar, Text, Title } from "@mantine/core";
 import useProjects from "../../hooks/useProjects";
-import useSites from "../../hooks/useSites";
 import IssueList from "./IssueList/IssueList";
 import OrganizationList from "./OrganizationList/OrganizationList";
-import ProjectList from "./ProjectList";
-import SiteList from "./SiteList";
 
 const Dashboard = () => {
-  const { selectedSite } = useSites();
   const { selectedProject } = useProjects();
 
   return (
     <AppShell
-      padding="md"
+      padding="xs"
       navbar={
-        <Navbar width={{ base: 300 }} p="xs">
+        <Navbar width={{ base: 150 }} p="xs">
           {selectedProject && <OrganizationList />}
         </Navbar>
       }

@@ -1,59 +1,35 @@
+import { Card } from "@mantine/core";
 import { DateTime } from "luxon";
 import { useCallback } from "react";
 import Chart from "react-apexcharts";
 
-function CustomChart({dataOrganisation}) {
-
-    const dataForChart= {
-        xAxisArray:[],
-        timeSpent:[],
-        timespentPerIssue:[],
-        timeToResolution:[]
+function CustomChart({ data, name, series }) {
+  const dataForChart = useCallback(() => {
+    let chartState = {
+      xAxisArray: [],
     };
-    
-    dataOrganisation.forEach(d => {
-        dataForChart.xAxisArray.unshift(DateTime.fromISO(d.month,{locale:'fr'}).toLocaleString({month: 'long', year:'numeric' }));
-        dataForChart.timeSpent.unshift(d.timespent.hours)
-        dataForChart.timespentPerIssue.unshift(d.timespentPerIssue.hours)
-        dataForChart.timeToResolution.unshift(d.timeToResolution.hours)
+
+    data.forEach((d) => {
+      chartState.xAxisArray.unshift(DateTime.fromISO(d.month).setLocale("fr").toFormat("MM/yy"));
     });
+    return chartState;
+  }, [data]);
 
-    const options = {
-        chart: {
-            id: "basic-bar",
-          },
-          xaxis: {
-            categories: dataForChart.xAxisArray
-          }
-    };
-    const series= [
-          {
-            name: "Temps dépensé",
-            data: dataForChart.timeSpent,
-            colors:'#9775FA'
-          },
-          {
-            name: "Temps dépensé par issue",
-            data: dataForChart.timespentPerIssue,
-            colors:'#4DABF7'
-          },
-          {
-            name: "Temps pour résoudre",
-            data: dataForChart.timeToResolution,
-            colors:'#69DB7C'
-          }
-    ];
+  const options = {
+    chart: {
+      id: "basic-bar",
+    },
+    title: { text: name },
+    xaxis: {
+      categories: dataForChart().xAxisArray,
+    },
+  };
 
   return (
-    <div>
-        <Chart
-              options={options}
-              series={series}
-              type="line"
-              width="700"
-            />
-    </div>
-  )
+    <Card shadow="xs">
+      <Chart options={options} series={series} type="line" width="100%" />
+    </Card>
+  );
 }
 
-export default CustomChart
+export default CustomChart;

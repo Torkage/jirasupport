@@ -1,22 +1,10 @@
-import {
-  ActionIcon,
-  Badge,
-  Box,
-  Card,
-  Container,
-  Group,
-  ScrollArea,
-  Stack,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Badge, Card, Group, Stack, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons";
 import useIssues from "../../../hooks/useIssues";
 import { tools } from "../../../utils/tools";
 
 const IssueDetails = () => {
   const { filteredIssues } = useIssues();
-
-  console.log("filteredIssues", filteredIssues);
 
   return (
     <Stack>
